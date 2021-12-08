@@ -415,6 +415,11 @@ namespace SlackAPI
             return APIRequestWithTokenAsync<ConversationsOpenResponse>(new Tuple<string, string>("channel", channelId));
         }
 
+        public Task<ConversationsOpenResponse> ConversationsOpenAsync(string[] userIds)
+        {
+            return APIRequestWithTokenAsync<ConversationsOpenResponse>(new Tuple<string, string>("users", string.Join(",", userIds)));
+        }
+
         public Task<ConversationsRenameResponse> ConversationsRenameAsync(string channelId, string name)
         {
             List<Tuple<string, string>> parameters = new List<Tuple<string, string>>();
@@ -842,6 +847,24 @@ namespace SlackAPI
             return APIRequestWithTokenAsync<ChannelSetTopicResponse>(
                     new Tuple<string, string>("channel", channelId),
                     new Tuple<string, string>("topic", newTopic));
+        }
+
+        public Task<AppHomeTabResponse> PublishAppHomeTab(
+            string userId,
+            View view)
+        {
+            view.type = ViewTypes.Home;
+            var parameters = new List<Tuple<string, string>>
+            {
+                new Tuple<string, string>("user_id", userId),
+                new Tuple<string, string>("view", JsonConvert.SerializeObject(view, Formatting.None,
+                    new JsonSerializerSettings // Shouldn't include a not set property
+                    {
+                        NullValueHandling = NullValueHandling.Ignore
+                    }))
+            };
+
+            return APIRequestWithTokenAsync<AppHomeTabResponse>(parameters.ToArray());
         }
     }
 }
