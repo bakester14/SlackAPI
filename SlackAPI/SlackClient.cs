@@ -609,7 +609,7 @@ namespace SlackAPI
             bool linkNames = false,
             IBlock[] blocks = null,
             Attachment[] attachments = null,
-            bool as_user = false)
+            bool? as_user = null)
         {
             List<Tuple<string, string>> parameters = new List<Tuple<string, string>>();
 
@@ -639,9 +639,9 @@ namespace SlackAPI
                    {
                       NullValueHandling = NullValueHandling.Ignore
                    })));
-
-
-         parameters.Add(new Tuple<string, string>("as_user", as_user.ToString()));
+            
+            if (as_user.HasValue)
+                parameters.Add(new Tuple<string, string>("as_user", as_user.ToString()));
 
             APIRequestWithToken(callback, parameters.ToArray());
         }
